@@ -60,7 +60,7 @@ class FileSelectorApp:
         file = self.file_path.get()
         
         if not folder and not file:
-            messagebox.showwarning("Предупреждение", "Выберите папку и/или файл!")
+            messagebox.showwarning("Предупреждение", "Выберите папку, имя базы данных и файл!")
             return
         worker = SQLiteWorker(folder + "/" + self.db_name.get().strip(".sqlite3")+".sqlite3")
         worker.insert_data_from_json(file)
