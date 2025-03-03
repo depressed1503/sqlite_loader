@@ -53,9 +53,17 @@ class SQLiteWorker:
 
         with open(file_name, encoding=encoding) as f:
             json_object = json.loads(f.read())
-            if format == "dbeaver":
+            if format == "json":
                 for model, value in json_object.items():
                     self.connection.execute(f"CREATE TABLE IF NOT EXISTS {model} ({",".join([key + " " + type_map[type(value[0][key])] for key in value[0].keys()])});")
                     self.connection.executemany(get_raw_sql_from_json_object(model, value), [list(v.values()) for v in value])
                 self.connection.commit()
+                return
+            if format == "dbeaver":
+                model = file_name.split('/')[-1].strip('.sqlite3')
+                for value in json_object:
+                    self.connection.execute(f"CREATE TABLE IF NOT EXISTS {model} ({",".join([key + " " + type_map[type(value[0][key])] for key in value[0].keys()])});")
+                    self.connection.executemany(get_raw_sql_from_json_object(model, value), [list(v.values()) for v in value])
+                self.connection.commit()
+                return
 
